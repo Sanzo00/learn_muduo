@@ -1,6 +1,7 @@
 #include "muduo/base/Timestamp.h"
-
+#include "muduo/base/Date.h"
 #include <iostream>
+#include <sys/time.h>
 
 void test_Timestamp()
 {
@@ -20,9 +21,27 @@ void test_Timestamp()
 	}
 }
 
+void test_Date()
+{
+	std::cout << "---- Date ----" << std::endl;
+
+	struct tm t;
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	time_t seconds = tv.tv_sec;
+	gmtime_r(&seconds, &t);
+//	muduo::Date date = muduo::Date(t);
+
+	muduo::Date date = muduo::Date::getLocalDate();
+	std::cout << "julianDayNumber: " << date.julianDayNumber() << std::endl;
+	std::cout << "toIsoString: " << date.toIsoString() << std::endl;
+}
+
 int main() {
 
 	test_Timestamp();
+
+	test_Date();
 
 	return 0;
 }
