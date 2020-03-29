@@ -7,6 +7,9 @@ project(learn_muduo)
 # 将目录 .  下的所有源文件保存到变量DIR_SRCS
 aux_source_directory(. DIR_SRCS)
 
+# 指定头文件目录
+include_directories(.)
+
 # 添加子目录
 add_subdirectory(muduo/base)
 add_subdirectory(muduo/net)
