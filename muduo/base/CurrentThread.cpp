@@ -3,6 +3,7 @@
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 namespace muduo
 {
@@ -12,10 +13,10 @@ namespace CurrentThread
 __thread int t_cachedTid = 0;
 __thread char t_tidString[32];
 __thread int t_tidStringLength = 0;
-__thread const char* t_cachedName = "unknow";
+__thread const char* t_threadName = "unknow";
 static_assert(std::is_same<int, pid_t>::value, "pid_t should be int");
 
-string statckTrace(bool demangle)
+string stackTrace(bool demangle)
 {
 	string stack;
 	const int max_frames = 200;
@@ -47,6 +48,7 @@ string statckTrace(bool demangle)
 					*plus = '\0';
 					int status = 0;
 					char* ret = abi::__cxa_demangle(left_par+1, demangled, &len, &status);
+//					printf("ret: %s\ndemangled: %s\nstatus: %d\n", ret, demangled, status);
 					*plus = '+';
 					if (status == 0) {
 						demangled = ret; // ret coule be realloc()

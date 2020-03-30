@@ -1,7 +1,11 @@
 #include "muduo/base/Timestamp.h"
 #include "muduo/base/Date.h"
+#include "muduo/base/Exception.h"
+#include "muduo/base/CurrentThread.h"
+
 #include <iostream>
 #include <sys/time.h>
+
 
 void test_Timestamp()
 {
@@ -37,11 +41,29 @@ void test_Date()
 	std::cout << "toIsoString: " << date.toIsoString() << std::endl;
 }
 
+void throw_Exception()
+{
+	throw muduo::Exception("err");	
+}
+
+void test_Exception()
+{
+	std::cout << "---- Exception ----\n";
+	try {
+		throw_Exception();
+	} catch(muduo::Exception e) {
+		std::cout << e.what() << std::endl;
+		std::cout << e.stackTrace() << std::endl;
+	}
+
+}
+
 int main() {
 
 	test_Timestamp();
-
 	test_Date();
+	test_Exception();
+
 
 	return 0;
 }
