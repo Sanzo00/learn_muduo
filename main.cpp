@@ -1,69 +1,60 @@
 #include "muduo/base/Timestamp.h"
-#include "muduo/base/Date.h"
-#include "muduo/base/Exception.h"
-#include "muduo/base/CurrentThread.h"
+#include "muduo/base/Mutex.h"
+#include "muduo/base/Thread.h"
+#include "muduo/base/CountDownLatch.h"
 
 #include <iostream>
-#include <sys/time.h>
+#include <stdio.h>
+#include <boost/bind.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <vector>
 
 
-void test_Timestamp()
+muduo::MutexLock g_mutex; // 声明锁
+std::vector<int> g_vec;
+const int kCount = 10000000; // 每次插入1000w个数
+
+void threadFunc()
 {
-	std::cout << "---- timestamp ----" << std::endl;
-
-	muduo::Timestamp t1 = muduo::Timestamp::now();
-	std::cout << t1.toString() << std::endl;
-	std::cout << t1.toFormattedString(true) << std::endl;
-
-	muduo::Timestamp t2 = muduo::Timestamp::now();
-	if (t1 != t2) {
-		std::cout << "not equal" << std::endl;
-	}
-
-	if (t2 > t1) {
-		std::cout << "t2 > t1" << std::endl;
+	for (int i = 0; i < kCount; ++i) {
+		muduo::MutexLockGuard lock(g_mutex); // 上锁
+		g_vec.push_back(i);
 	}
 }
 
-void test_Date()
+void test_Mutex()
 {
-	std::cout << "---- Date ----" << std::endl;
+	std::cout << "---- Mutex ----\n";
+	const int kMaxThreads = 8; // 最多8个线程
+	g_vec.reserve(kMaxThreads * kCount); // 提前分配大小
 
-	struct tm t;
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	time_t seconds = tv.tv_sec;
-	gmtime_r(&seconds, &t);
-//	muduo::Date date = muduo::Date(t);
-
-	muduo::Date date = muduo::Date::getLocalDate();
-	std::cout << "julianDayNumber: " << date.julianDayNumber() << std::endl;
-	std::cout << "toIsoString: " << date.toIsoString() << std::endl;
-}
-
-void throw_Exception()
-{
-	throw muduo::Exception("err");	
-}
-
-void test_Exception()
-{
-	std::cout << "---- Exception ----\n";
-	try {
-		throw_Exception();
-	} catch(muduo::Exception e) {
-		std::cout << e.what() << std::endl;
-		std::cout << e.stackTrace() << std::endl;
+	muduo::Timestamp start(muduo::Timestamp::now()); // 当前时间戳
+	// 单个线程不用锁的时间
+	for (int i = 0; i < kCount; ++i) {
+		g_vec.push_back(i);
 	}
+	printf("1 thread(s) without lock %f\n", muduo::timeDifference(muduo::Timestamp::now(), start));
 
+	for (int i = 0; i < kMaxThreads; ++i) {
+		// i个线程用锁的时间
+		boost::ptr_vector<muduo::Thread> threads;
+		g_vec.clear();
+		start = muduo::Timestamp::now(); // 更新时间戳
+		for (int j = 0; j <= i; ++j) {
+			threads.push_back(new muduo::Thread(&threadFunc)); // 创建线程
+			threads.back().start(); // 启动线程	
+		}
+
+		for (int j = 0; j <= i; ++j) {
+			threads[j].join(); // 回收线程
+		}
+		printf("%d thread(s) with lock %f\n", i+1, muduo::timeDifference(muduo::Timestamp::now(), start));
+	}
 }
 
 int main() {
 
-	test_Timestamp();
-	test_Date();
-	test_Exception();
-
+	test_Mutex();
 
 	return 0;
 }
