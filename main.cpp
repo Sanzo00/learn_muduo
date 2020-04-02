@@ -1,60 +1,56 @@
-#include "muduo/base/Timestamp.h"
-#include "muduo/base/Mutex.h"
+#include "muduo/base/BoundedBlockingQueue.h"
+#include "muduo/base/BlockingQueue.h"
 #include "muduo/base/Thread.h"
-#include "muduo/base/CountDownLatch.h"
 
 #include <iostream>
 #include <stdio.h>
-#include <boost/bind.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <vector>
 
+using namespace muduo;
 
-muduo::MutexLock g_mutex; // 声明锁
-std::vector<int> g_vec;
-const int kCount = 10000000; // 每次插入1000w个数
-
-void threadFunc()
+BoundedBlockingQueue<int> que(3);
+BlockingQueue<int> que2;
+void produce() 
 {
-	for (int i = 0; i < kCount; ++i) {
-		muduo::MutexLockGuard lock(g_mutex); // 上锁
-		g_vec.push_back(i);
+	int num = 1;
+	while (true) {
+		// que.put(num); // for BoundedBlockingQueue
+		que2.put(num);
+		int ts = rand() % 3;
+		std::cout << "produce: put " << num << " and sleep " << ts << "s\n";
+		sleep(ts);
+		++num;
 	}
 }
 
-void test_Mutex()
+void consume() 
 {
-	std::cout << "---- Mutex ----\n";
-	const int kMaxThreads = 8; // 最多8个线程
-	g_vec.reserve(kMaxThreads * kCount); // 提前分配大小
-
-	muduo::Timestamp start(muduo::Timestamp::now()); // 当前时间戳
-	// 单个线程不用锁的时间
-	for (int i = 0; i < kCount; ++i) {
-		g_vec.push_back(i);
+	while (true) {
+		// int num = que.take(); // for BoundedBlockingQueue
+		int num = que2.take(); // for BlockingQueue
+		int ts = rand() % 3;
+		std::cout << "consume: take " << num << " and sleep " << ts << "s\n";
+		sleep(ts);
 	}
-	printf("1 thread(s) without lock %f\n", muduo::timeDifference(muduo::Timestamp::now(), start));
+}
 
-	for (int i = 0; i < kMaxThreads; ++i) {
-		// i个线程用锁的时间
-		boost::ptr_vector<muduo::Thread> threads;
-		g_vec.clear();
-		start = muduo::Timestamp::now(); // 更新时间戳
-		for (int j = 0; j <= i; ++j) {
-			threads.push_back(new muduo::Thread(&threadFunc)); // 创建线程
-			threads.back().start(); // 启动线程	
-		}
+void test_BlockingQueue()
+{
+	// std::cout << "----- BoundedBlockingQueue -----\n";
+	std::cout << "----- BlockingQueue -----\n";
+	
+	Thread t1(produce);
+	Thread t2(consume);
 
-		for (int j = 0; j <= i; ++j) {
-			threads[j].join(); // 回收线程
-		}
-		printf("%d thread(s) with lock %f\n", i+1, muduo::timeDifference(muduo::Timestamp::now(), start));
-	}
+	t1.start();
+	t2.start();
+
+	t1.join();
+	t2.join();
 }
 
 int main() {
 
-	test_Mutex();
+	test_BlockingQueue();
 
 	return 0;
 }
