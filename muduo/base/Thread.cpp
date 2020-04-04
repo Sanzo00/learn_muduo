@@ -1,7 +1,7 @@
 #include "muduo/base/Thread.h"
 #include "muduo/base/CurrentThread.h"
 #include "muduo/base/Exception.h"
-// #include "muduo/base/Logging.h"
+#include "muduo/base/Logging.h"
 #include "muduo/base/Timestamp.h"
 
 #include <type_traits>
@@ -163,7 +163,7 @@ void Thread::start()
 	{
 		started_ = false;
 		delete data;
-		// LOG_SYSFATAL << "Failed in pthread_create";
+		LOG_SYSFATAL << "Failed in pthread_create";
 	} else {
 		latch_.wait();
 		assert(tid_ > 0);
