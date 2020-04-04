@@ -1,56 +1,35 @@
-#include "muduo/base/BoundedBlockingQueue.h"
-#include "muduo/base/BlockingQueue.h"
 #include "muduo/base/Thread.h"
+#include "muduo/base/Logging.h"
 
 #include <iostream>
 #include <stdio.h>
 
 using namespace muduo;
 
-BoundedBlockingQueue<int> que(3);
-BlockingQueue<int> que2;
-void produce() 
+void threadFunc() 
 {
-	int num = 1;
-	while (true) {
-		// que.put(num); // for BoundedBlockingQueue
-		que2.put(num);
-		int ts = rand() % 3;
-		std::cout << "produce: put " << num << " and sleep " << ts << "s\n";
-		sleep(ts);
-		++num;
-	}
+	LOG_TRACE << "thread TRACE";
+	LOG_DEBUG << "thread DEBUG";
+	LOG_INFO << "thread  INFO";
+	LOG_WARN << "thread  WARN";
+	LOG_ERROR << "thread ERROR";
+	LOG_SYSERR << "thread SYSERR";
+
 }
 
-void consume() 
+void test_Log()
 {
-	while (true) {
-		// int num = que.take(); // for BoundedBlockingQueue
-		int num = que2.take(); // for BlockingQueue
-		int ts = rand() % 3;
-		std::cout << "consume: take " << num << " and sleep " << ts << "s\n";
-		sleep(ts);
-	}
-}
-
-void test_BlockingQueue()
-{
-	// std::cout << "----- BoundedBlockingQueue -----\n";
-	std::cout << "----- BlockingQueue -----\n";
+	std::cout << "----- Log -----\n";
 	
-	Thread t1(produce);
-	Thread t2(consume);
+	Thread t1(threadFunc);
 
 	t1.start();
-	t2.start();
-
 	t1.join();
-	t2.join();
 }
 
 int main() {
 
-	test_BlockingQueue();
+	test_Log();
 
 	return 0;
 }
