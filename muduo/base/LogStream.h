@@ -155,7 +155,7 @@ private:
 	template<typename T>
 	void formatInteger(T);	
 	Buffer buffer_;
-	static const int kMaxNumericSize = 44;
+	static const int kMaxNumericSize = 32;
 }; // class LogStream
 
 class Fmt
@@ -167,7 +167,7 @@ public:
 	int length() const { return length_; }
 
 private:
-	char buf_[44];
+	char buf_[32];
 	int length_;
 }; // class Fmt
 

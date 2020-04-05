@@ -217,7 +217,7 @@ void LogStream::staticCheck()
 {
 	static_assert(kMaxNumericSize - 10 > std::numeric_limits<double>::digits10,
 			"kMaxNumericSize is large enough");
-	static_assert(kMaxNumericSize - 10 > std::numeric_limits<long double>::digits10, // 33, Linux kali 4.19.93-Re4son-v8l+
+	static_assert(kMaxNumericSize - 10 > std::numeric_limits<long double>::digits10,
 			"kMaxNumericSize is large enough");
 	static_assert(kMaxNumericSize - 10 > std::numeric_limits<long>::digits10,
 			"kMaxNumericSize is large enough");
