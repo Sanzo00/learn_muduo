@@ -31,11 +31,11 @@ InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6)
 		addr6_.sin6_addr = ip;
 		addr6_.sin6_port = sockets::hostToNetwork16(port);
 	}else {
-		memZero(&addr, sizeof(addr_));
+		memZero(&addr_, sizeof(addr_));
 		addr_.sin_family = AF_INET;
-		in_addr ip = loopbackOnly ? kInaddrLoopback : kInaddrAny;
+		in_addr_t ip = loopbackOnly ? kInaddrLoopback : kInaddrAny;
 		addr_.sin_addr.s_addr = sockets::hostToNetwork32(ip);
-		addr_.sin_port = sockets::hostToNetWork16(port);
+		addr_.sin_port = sockets::hostToNetwork16(port);
 	}
 }
 
@@ -46,7 +46,7 @@ InetAddress::InetAddress(StringArg ip, uint16_t port, bool ipv6)
 		sockets::fromIpPort(ip.c_str(), port, &addr6_);
 	}else {
 		memZero(&addr_, sizeof addr_);
-		sockets::fromIpPort(ip.c_str, port, &addr_);
+		sockets::fromIpPort(ip.c_str(), port, &addr_);
 	}
 }
 

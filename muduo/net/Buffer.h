@@ -50,7 +50,7 @@ public:
 	}
 
 	size_t readableBytes() const { return writerIndex_ - readerIndex_; }
-	size_t wirtableBytes() const { return buffer_.size() - writerIndex_; }
+	size_t writableBytes() const { return buffer_.size() - writerIndex_; }
 	size_t prependableBytes() const { return readerIndex_; }
 	const char* peek() const { return begin() + readerIndex_; }
 	const char* findCRLF() const // 返回 '\r\n'的位置
@@ -187,8 +187,7 @@ public:
 
 	void appendInt8(int8_t x)
 	{
-		int8_t be8 = sockets::hostToNetwork8(x);
-		append(&be8, sizeof be8);
+		append(&x, sizeof x);
 	}
 
 	int64_t readInt64()
@@ -246,9 +245,8 @@ public:
 	int8_t peekInt8() const
 	{
 		assert(readableBytes() >= sizeof(int8_t));
-		int8_t be8 = 0;
-		::memcpy(&be8, peek(), sizeof be8);
-		return sockets::networkToHost8(be8);
+		int8_t x = *peek();
+		return x;
 	}
 
 	void prependInt64(int64_t x)
@@ -271,8 +269,7 @@ public:
 
 	void prependInt8(int8_t x)
 	{
-		int8_t be8 = sockets::hostToNetwork8(x);
-		prepend(&be8, sizeof be8);
+		prepend(&x, sizeof x);
 	}
 
 	void prepend(const void* data, size_t len)
@@ -280,7 +277,7 @@ public:
 		assert(len <= prependableBytes());
 		readerIndex_ -= len;
 		const char* d = static_cast<const char*>(data);
-		std::copy(d, d+len, begin(), rederIndex_);
+		std::copy(d, d+len, begin()+readerIndex_);
 	}
 
 	void shrink(size_t reserve)
@@ -302,12 +299,12 @@ private:
 	char* begin() { return &*buffer_.begin(); }
 	const char* begin() const { return &*buffer_.begin(); }
 	void makeSpace(size_t len) {
-		if (writeableBytes() + prependableBytes() < len + kCheapPrepend) { // 空间不够, 扩容
+		if (writableBytes() + prependableBytes() < len + kCheapPrepend) { // 空间不够, 扩容
 			buffer_.resize(writerIndex_ + len);
 		}else {
 			// 把readable data移到前面
 			assert(kCheapPrepend < readerIndex_);
-			size readable = readableBytes();
+			size_t readable = readableBytes();
 			std::copy(begin()+readerIndex_, begin()+writerIndex_, begin()+kCheapPrepend);
 			readerIndex_ = kCheapPrepend;
 			writerIndex_ = readerIndex_ + readable;

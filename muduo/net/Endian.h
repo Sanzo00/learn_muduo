@@ -1,5 +1,5 @@
 #ifndef MUDUO_NET_ENDIAN_H
-#define MUDUO_NET_ENDIAN-H
+#define MUDUO_NET_ENDIAN_H
 
 #include <stdint.h>
 #include <endian.h>

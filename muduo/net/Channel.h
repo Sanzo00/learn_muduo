@@ -4,7 +4,7 @@
 #include "muduo/base/noncopyable.h"
 #include "muduo/base/Timestamp.h"
 #include <functional>
-#include <memeory>
+#include <memory>
 
 namespace muduo
 {
@@ -33,14 +33,14 @@ public:
 	void tie(const std::shared_ptr<void>&);
 	int fd() const { return fd_; }
 	int events() const { return events_; }
-	void set_revents(int revt) { revents_ = revet; }
+	void set_revents(int revt) { revents_ = revt; }
 	bool isNoneEvent() const { return events_ == kNoneEvent; }
 	
 	void enableReading() { events_ |= kReadEvent; update(); }
 	void disableReading() { events_ &= ~kReadEvent; update(); }
 	void enableWriting() { events_ |= kWriteEvent; update(); }
 	void disableWriting() { events_ &= ~kWriteEvent; update(); }
-	void disableAll() { events_ kNoneEvent; update(); }
+	void disableAll() { events_ = kNoneEvent; update(); }
 	bool isWriting() const { return events_ & kWriteEvent; }
 	bool isReading() const { return events_ & kReadEvent; }
 

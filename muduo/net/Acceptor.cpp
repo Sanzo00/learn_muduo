@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 using namespace muduo;
-using namespace muduo:net;
+using namespace muduo::net;
 
 Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport)
 	: loop_(loop),
@@ -22,7 +22,7 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reusepor
 	acceptSocket_.setReuseAddr(true);
 	acceptSocket_.setReusePort(reuseport);
 	acceptSocket_.bindAddress(listenAddr);
-	acceptSocket_.setReadCallback(std::bind(&Acceptor::handleRead, this));
+	acceptChannel_.setReadCallback(std::bind(&Acceptor::handleRead, this));
 }	
 
 Acceptor::~Acceptor()
@@ -37,7 +37,7 @@ void Acceptor::listen()
 	loop_->assertInLoopThread();
 	listenning_ = true;
 	acceptSocket_.listen();
-	acceptSocket_.enableReading();
+	acceptChannel_.enableReading();
 }
 
 void Acceptor::handleRead()

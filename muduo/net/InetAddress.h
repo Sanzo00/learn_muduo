@@ -45,6 +45,7 @@ public:
 
 	string toIp() const;
 	string toIpPort() const;
+	uint16_t toPort() const;
 
 	const struct sockaddr* getSockAddr() const { return sockets::sockaddr_cast(&addr6_); }
 	void setSockAddrInet6(const struct sockaddr_in6& addr6) { addr6_ = addr6; }
@@ -63,7 +64,7 @@ public:
 private:
 	union
 	{
-		struct sockaddr_in addr;
+		struct sockaddr_in addr_;
 		struct sockaddr_in6 addr6_;
 	};
 

@@ -25,7 +25,7 @@ int createEventfd()
 		LOG_SYSERR << "Failed in eventfd";
 		abort();
 	}
-	return evtfd();
+	return evtfd;
 }
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
@@ -89,7 +89,7 @@ void EventLoop::loop()
 
 	while (!quit_) {
 		activeChannels_.clear();
-		poolReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+		pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
 		++iteration_;
 		if (Logger::logLevel() <= Logger::TRACE) {
 			printActiveChannels();
@@ -98,7 +98,7 @@ void EventLoop::loop()
 		eventHandling_ = true;
 		for (Channel* channel : activeChannels_){
 			currentActiveChannel_ = channel;
-			currentActiveChannel_->handleEvent(poolReturnTime_);
+			currentActiveChannel_->handleEvent(pollReturnTime_);
 		}
 		currentActiveChannel_ = NULL;
 		eventHandling_ = false;
@@ -106,12 +106,12 @@ void EventLoop::loop()
 	}
 
 	LOG_TRACE << "EventLoop " << this << " stop looping";
-	loopint_ = false;
+	looping_ = false;
 }
 
 void EventLoop::quit()
 {
-	quit_ true;
+	quit_ = true;
 	if (!isInLoopThread()) {
 		wakeup();
 	}

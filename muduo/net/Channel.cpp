@@ -19,7 +19,7 @@ Channel::Channel(EventLoop* loop, int fd__)
 	  logHup_(true),
 	  tied_(false),
 	  eventHandling_(false),
-	  addedToLoop(false)
+	  addedToLoop_(false)
 {
 }
 
@@ -34,7 +34,7 @@ Channel::~Channel()
 
 void Channel::tie(const std::shared_ptr<void>& obj)
 {
-	tid_ = obj;
+	tie_ = obj;
 	tied_ = true;
 }
 
@@ -67,14 +67,14 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
 		}
 		if (closeCallback_) closeCallback_();
 	}
-	if (revents_ & POLLINVAL) { // 文件描述符未打开
+	if (revents_ & POLLNVAL) { // 文件描述符未打开
 		LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLNVAL";
 	}
-	if (revents_ & (POLLERR | POLLINVAL)) {
+	if (revents_ & (POLLERR | POLLNVAL)) {
 		if (errorCallback_) errorCallback_();
 	}
 	if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
-		if (readCallback_) readCallback_();
+		if (readCallback_) readCallback_(receiveTime);
 	}
 	if (revents_ & POLLOUT) {
 		if (writeCallback_) writeCallback_();

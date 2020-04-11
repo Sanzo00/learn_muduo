@@ -11,6 +11,9 @@ namespace muduo
 // tcp networking
 namespace net
 {
+
+class InetAddress;
+
 // Wrapper of socket file descriptor
 class Socket : noncopyable
 {

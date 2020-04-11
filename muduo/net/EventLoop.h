@@ -1,5 +1,5 @@
-#ifndef MDUOO_NET_EVENTLOOP_H
-#define MUDUO_NET_EVENTlOOP_H
+#ifndef MUDUO_NET_EVENTLOOP_H
+#define MUDUO_NET_EVENTLOOP_H
 
 #include <atomic>
 #include <functional>
@@ -14,6 +14,8 @@
 
 namespace muduo
 {
+
+namespace net{
 
 class Channel;
 class Poller;
@@ -64,7 +66,7 @@ public:
 	bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
 	bool eventHandling() const { return eventHandling_; }
 	
-	void setContext(const boost::any& context) { return context_; }
+	void setContext(const boost::any& context) { context_ = context; }
 	boost::any* getMutableContext() { return &context_; }
 
 	static EventLoop* getEventLoopOfCurrentThread();
@@ -96,9 +98,7 @@ private:
 	mutable MutexLock mutex_;
 	std::vector<Functor> pendingFunctors_;
 };
-
+} // namespace net
 } // namespace muduo
 
 #endif // MUDUO_NET_EVENTLOOP_H
-
-

@@ -8,7 +8,7 @@
 #include <stdio.h> // snprintf
 #include <sys/socket.h>
 #include <sys/uio.h> // readv
-#include <uinstd.h>
+#include <unistd.h>
 
 using namespace muduo;
 using namespace muduo::net;
@@ -151,7 +151,7 @@ ssize_t sockets::write(int sockfd, const void *buf, size_t count)
 {
 	return ::write(sockfd, buf, count);
 }
-ssize_t sockets::close(int sockfd)
+void sockets::close(int sockfd)
 {
 	if (::close(sockfd) < 0) {
 		LOG_SYSERR << "sockets::close";
@@ -191,7 +191,7 @@ void sockets::toIp(char* buf, size_t size, const struct sockaddr* addr)
 void sockets::fromIpPort(const char* ip, uint16_t port, struct sockaddr_in* addr)
 {
 	addr->sin_family = AF_INET;
-	addr->sin_port = hostToNetWork16(port);
+	addr->sin_port = hostToNetwork16(port);
 	if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0) {
 		LOG_SYSERR << "sockets::fromIpPort";
 	}
@@ -210,7 +210,7 @@ int sockets::getSocketError(int sockfd)
 {
 	int optval;
 	socklen_t optlen = static_cast<socklen_t>(sizeof optval);
-	if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optaval, &optlen) < 0) {
+	if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
 		return errno;
 	}else {
 		return optval;
