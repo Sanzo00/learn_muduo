@@ -114,7 +114,7 @@ const char* strerror_tl(int savedErrno);
 
 // Check that the input is non NULL
 #define CHECK_NOTNULL(val) \
-	::muduo::ChechNotNull(__FILE__, __LINE__, "'" #val "' Must be non NULL", (val))
+	::muduo::CheckNotNull(__FILE__, __LINE__, "'" #val "' Must be non NULL", (val))
 
 // A small helper for CHECK_NOTNULL().
 template <typename T>

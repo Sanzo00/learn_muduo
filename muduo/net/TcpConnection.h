@@ -41,6 +41,7 @@ public:
 	string getTcpInfoString() const;
 
 	void send(const void* message, int len);
+	void send(const StringPiece& message);
 	void send(Buffer* message);
 	void shutdown();
 	void forceClose();
@@ -49,7 +50,7 @@ public:
 
 	void startRead();
 	void stopRead();
-	bool isReadind() cosnt { return reading_; }
+	bool isReadind() const { return reading_; }
 	
 	void setContext(const boost::any& context) { context_ = context; }
 	const boost::any& getContext() const { return context_; }

@@ -6,7 +6,7 @@
 namespace muduo
 {
 // A barely usable WeakCallback
-template<typename CLASS, typename..ARGS>
+template<typename CLASS, typename... ARGS>
 class WeakCallback
 {
 public:
@@ -23,7 +23,7 @@ public:
 			function_(ptr.get(), std::forward<ARGS>(args)...);
 		}
 	}
-pirvate:
+private:
 	std::weak_ptr<CLASS> object_;
 	std::function<void (CLASS*, ARGS...)> function_;
 
@@ -35,7 +35,7 @@ WeakCallback<CLASS, ARGS...> makeWeakCallback(const std::shared_ptr<CLASS>& obje
 	return WeakCallback<CLASS, ARGS...>(object, function);
 }										
 
-template<typename CLASS, ARGS...>
+template<typename CLASS, typename... ARGS>
 WeakCallback<CLASS, ARGS...> makeWeakCallback(const std::shared_ptr<CLASS>& object, void (CLASS::*function)(ARGS...) const)
 {
 	return WeakCallback<CLASS, ARGS...>(object, function);
