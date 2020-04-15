@@ -4,6 +4,7 @@
 #include "muduo/base/Logging.h"
 
 #include <netdb.h>
+#include <netinet/in.h>
 
 // INADDR_ANY use (type)value casting.
 #pragma GCC diagnostic ignored "-Wold-style-cast"
