@@ -23,7 +23,7 @@ void newmessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp t)
 
 void threadInit(EventLoop*) 
 {
-	cout << "Just empty threadInit";
+	cout << "Just empty threadInit\n";
 }
 
 void writeComplete(const TcpConnectionPtr& conn)
@@ -41,9 +41,11 @@ int main() {
 	Logger::setLogLevel(Logger::DEBUG);
 	InetAddress listenAddr("0.0.0.0", 9999);
 	EventLoop loop;
+
 	TcpServer server(&loop, listenAddr, "TcpServer");
 	server.setConnectionCallback(newconn);
 	server.setMessageCallback(newmessage);
+
 	server.setThreadNum(3);
 	server.setThreadInitCallback(threadInit);
 	server.setWriteCompleteCallback(writeComplete);

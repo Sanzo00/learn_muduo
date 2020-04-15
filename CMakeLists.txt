@@ -18,7 +18,14 @@ add_subdirectory(muduo/net)
 add_compile_options(-std=c++11 -Wall)
 
 # 生成可执行文件
-add_executable(test ${DIR_SRCS})
+add_executable(main ${DIR_SRCS})
 
 # 添加链接库
-target_link_libraries(test muduo_base muduo_net)
+target_link_libraries(main muduo_base muduo_net)
+
+option(MUDUO_BUILD_TEST "Build muduo test" ON)
+if (MUDUO_BUILD_TEST)
+	add_subdirectory(test)
+endif()
+
+
