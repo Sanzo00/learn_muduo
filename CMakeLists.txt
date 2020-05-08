@@ -23,9 +23,14 @@ add_executable(main ${DIR_SRCS})
 # 添加链接库
 target_link_libraries(main muduo_base muduo_net)
 
+# 编译test
 option(MUDUO_BUILD_TEST "Build muduo test" ON)
 if (MUDUO_BUILD_TEST)
 	add_subdirectory(test)
 endif()
 
-
+# 编译example
+option(MUDUO_BUILD_EXAMPLE "Build muduo example" ON)
+if (MUDUO_BUILD_EXAMPLE)
+	add_subdirectory(example)
+endif()
