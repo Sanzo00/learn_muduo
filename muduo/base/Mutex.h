@@ -59,7 +59,7 @@ public:
 private:
 	friend class Condition; // 条件变量类用到锁
 
-	class UnassignGuard : noncopyable
+	class UnassignGuard : noncopyable // 为了实现Condition中的wait()
 	{
 	public:
 		explicit UnassignGuard(MutexLock &owner)

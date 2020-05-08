@@ -85,7 +85,7 @@ private:
 	mutable MutexLock			mutex_;
 	Condition					notEmpty_;
 	Condition					notFull_;
-	boost::circular_buffer<T> 	queue_;
+	boost::circular_buffer<T>	queue_;
 
 }; // class BoundedBlockingQueue
 

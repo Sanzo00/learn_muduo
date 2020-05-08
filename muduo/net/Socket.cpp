@@ -31,7 +31,7 @@ bool Socket::getTcpInfoString(char* buf, int len) const
 				"rto=%u ato=%u snd_mss=%u rcv_mss=%u "
 				"lost=%u retrans=%u rtt=%u rttvar=%u "
 				"sshthresh=%u cwnd=%u total_retrans=%u ",
-				tcpi.tcpi_retransmits,  // 重传数, 当前待重传的包数, 重传完毕后清零
+				tcpi.tcpi_retransmits,	// 重传数, 当前待重传的包数, 重传完毕后清零
 				tcpi.tcpi_rto,			// 重传超时时间, 和RTT有关,RTT越大,rto越大
 				tcpi.tcpi_ato,			// 延时确认的估值
 				tcpi.tcpi_snd_mss,		// 本端的mss

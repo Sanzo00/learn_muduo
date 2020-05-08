@@ -18,7 +18,7 @@ namespace CurrentThread
 	inline int tid()
 	{
 		// __builtin_expect是GCC提供给程序员使用的, 目的是将"分支转移"的信息提供给编译器
-		// 编译器对代码进行优化, 减少指令跳转带来的新能下降
+		// 编译器对代码进行优化, 减少指令跳转带来的性能下降
 		// __builtin_expect(EXP, N) EXP==N的可能性更大
 		if (__builtin_expect(t_cachedTid == 0, 0)) {
 			cacheTid();

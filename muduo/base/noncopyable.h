@@ -16,7 +16,6 @@ protected:
 	noncopyable() = default;
 	~noncopyable() = default;
 };
-
 }
 
 #endif
