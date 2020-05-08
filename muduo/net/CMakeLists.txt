@@ -1,6 +1,9 @@
 # 将目录 .  下的所有源文件保存到变量DIR_NET_SRCS
 aux_source_directory(. DIR_NET_SRCS)
 
+# 添加子目录
+add_subdirectory(./http)
+
 # 生成链接库
 add_library(muduo_net ${DIR_NET_SRCS})
 
